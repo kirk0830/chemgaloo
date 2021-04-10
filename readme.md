@@ -1,4 +1,4 @@
-# Chemgaloo: a numerical simulation program of complicated kinetic chemical reactions system
+# Chemgaloo: a numerical simulation program for complicated kinetic chemical reactions system
 
 Description:
 ---
