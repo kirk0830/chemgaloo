@@ -1,8 +1,8 @@
 import chemgaloo as cg
 import matplotlib.pyplot as plt
 
-chem1 = cg.chemical(1)
-chem2 = cg.chemical(1)
+chem1 = cg.chemical(1.)
+chem2 = cg.chemical(1.)
 chem3 = cg.chemical()
 chem4 = cg.chemical()
 
@@ -35,7 +35,7 @@ detector1 = cg.detector(
     motion = 'print'
     )
 
-time, c_log, _ = cg.reactor.batch_reactor(
+time, c_log, _, _ = cg.reactor.batch_reactor(
     chemicals = [chem1, chem2, chem3, chem4],
     reactions = [rxn1, rxn2],
     dt = 0.01,

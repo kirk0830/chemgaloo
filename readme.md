@@ -16,10 +16,10 @@ Usage:
 Examples:
 ---
 Example1: a two-step chain reaction 1 + 2 -> 3, 1 + 3 -> 4. k1 and k2 are known, so use example1 to
-          see evolution of concentrations of four chemicals.   
+          see evolution of concentrations of four chemicals.
 Example2: a two-step chain reaction 1 + 2 -> 3, 1 + 3 -> 4. k1 is known but k2 is unknown. Use detec
           -tor to check when will reaction system reach given ratio, and stop the whole reactions sy
-          -stem   
+          -stem
 Example3: a two-step chain reaction 1 + 2 -> 3, 1 + 3 -> 4. k1 is known but k2 is unknown. By compar
           -ing experimental data, find the same time inteval both from experimental side and simulat
-          -tion side, thus to find correct k2   
+          -tion side, thus to find correct k2

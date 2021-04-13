@@ -57,7 +57,7 @@ for k2 in k2s:
     chem3.c = 0.0
     chem4.c = 0.0
 
-    time, c_log, if_expire = cg.reactor.batch_reactor(
+    time, c_log, if_expire, _ = cg.reactor.batch_reactor(
         chemicals = [chem1, chem2, chem3, chem4],
         reactions = [rxn1, rxn2],
         dt = 0.001,

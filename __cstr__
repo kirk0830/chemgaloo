@@ -1,0 +1,99 @@
+def cstr(
+    chemicals_in = [],
+    c_unit = 'mol/L',
+    reactions = [],
+    residual_time_f = 'Gaussian', 
+    rtf_param1 = 0., 
+    rtf_param2 = 0.,
+    n_thread = 5,
+    dt = 0.005,
+    t_unit = 'second',
+    detectors = []
+    ):
+    """
+    WARNING: can not work properly\n
+    Continuous stirring tank reactor (CSTR)
+    Parameters:
+    ---
+    chemicals_in: 1-d array, class: chemgaloo.chemical
+        chemicals list, give initial concentrations
+    c_unit: str
+        unit of concentrations
+    reactions: 1-d array, class: chemgaloo.reaction
+        reactions that may occur in present system
+    residual_time_f: str
+        function type of residual time of chemicals in CSTR, currently only 'Gaussian' is implemented
+    rtf_param1: float
+        the first parameter of residual time distribution function
+    rtf_param2: float
+        the second parameter of residual time distribution function
+    n_thread: int
+        number of threads that have different residual time which considered in present simulation, the larger value it is specified, the more accurate value of the final output concentration
+    dt: float
+        time inteval for discrete integral
+    t_unit: str
+        unit of simulation time
+    detectors: 1-d array, class: chemgaloo.detector
+        detectors organized in 1-d array that may be used to detect property of interest
+    Return:
+    ---
+    chemi_out: 1-d array, class: chemgaloo.chemical
+        chemical list of output, averaged over different threads
+    chemi_out_per_thread: 2-d array, class: chemgaloo.chemical
+        chemical list of output of all threads that configurated randomly according to given rtf and its parameters
+    time: float
+        averaged residual time, which is averaged over different threads
+    time_per_thread: 1-d array, float
+        residual time of all threads that configurated randomly according to given rtf and its parameters
+    """
+    n_chemi = len(chemicals_in)
+
+    chemi_out_per_threads = []
+    chemi_out = []
+    time_per_threads = []
+    time = 0
+
+    prob_log = []
+    prob_normalizer = 0
+
+    for idx_thread in range(n_thread):
+
+        if residual_time_f == 'Gaussian':
+
+            irt = rnd.gauss(mu = rtf_param1, sigma = rtf_param2)
+            instep = int(irt/dt)
+            iprob = __CSTR_Gau_prob_dist1d__(x = irt, mu = rtf_param1, sigma = rtf_param2)
+            prob_log.append(iprob)
+            prob_normalizer += iprob
+
+        ichemi_in = deepcopy(chemicals_in[:])
+
+        itime_log, ichemi_c_log, _, _ = batch_reactor(
+            chemicals = ichemi_in,
+            reactions = reactions,
+            c_unit = c_unit,
+            dt = dt,
+            nstep = instep,
+            t_unit = t_unit,
+            detectors = []
+        )
+        ichemi_out = []
+        for idx_chemi in range(n_chemi):
+
+            ichemi_out.append(ichemi_c_log[idx_chemi][-1])
+        chemi_out_per_threads.append(ichemi_out)
+
+        itime = itime_log[-1]
+        time_per_threads.append(itime)
+
+    for idx_chemi in range(n_chemi):
+        ichemi_c = 0
+        for idx_thread in range(n_thread):
+        
+            ichemi_c += prob_log[idx_thread]*chemi_out_per_threads[idx_thread][idx_chemi]/prob_normalizer
+        chemi_out.append(ichemi_c)
+    for idx_thread in range(n_thread):
+
+        time += prob_log[idx_thread]*time_per_threads[idx_thread]/prob_normalizer
+
+    return chemi_out, chemi_out_per_threads, time, time_per_threads
