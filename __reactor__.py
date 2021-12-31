@@ -183,6 +183,7 @@ def cstr(
     dt = 0.01,
     conv_thr = 1e-3,
     max_iter = 5,
+    mixing = 0.1,
     verbosity = 'high'
 ):
     """
@@ -242,12 +243,14 @@ def cstr(
 
                     irxn.__save_state__()
             chemi_out = []
+            chemi_iter = []
             for ichemi in chemicals:
 
                 chemi_out.append(ichemi.c)
+                chemi_iter.append(mixing*ichemi.c+(1-mixing)*ichemi.ccstr_in)
                 ichemi.c = ichemi.ccstr_in
-            
-            __cstr_c_initializer__(chemicals = chemicals, iter_list = chemi_out)
+
+            __cstr_c_initializer__(chemicals = chemicals, iter_list = chemi_iter)
 
             iter_err = abs(1 - __vector_similar__(
                 v1 = chemi_out_prev,
