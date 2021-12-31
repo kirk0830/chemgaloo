@@ -176,10 +176,11 @@ class reaction:
             if mode == 'CSTR':
 
                 rs = []
+                r0 = self.k
                 for idx_rxtn in range(self.n_rxtns):
 
                     ir = self.k
-                    r0 = self.k
+                    
                     for jdx_rxtn in range(self.n_rxtns):
 
                         if idx_rxtn != jdx_rxtn:
@@ -189,8 +190,8 @@ class reaction:
 
                             ir *= (self.__c_bak__[jdx_rxtn])**self.stois[jdx_rxtn]
                     rs.append(ir)
-                    r0 *= self.__c_bak__[idx_rxtn]
-
+                    r0 *= self.__c_bak__[idx_rxtn]**self.stois[idx_rxtn]
+                    #r0 *= self.__c_bak__[idx_rxtn]
                 rs.append(r0)
                 return rs
             elif mode == 'BSTR':
@@ -262,7 +263,7 @@ class reaction:
             deltaU -= self.stois[idx_rxtn] * self.rxtns[idx_rxtn].U
         for idx_prdt in self.n_prdts:
 
-            deltaU += self.stois[idx_rxtn + self.n_rxtns] * self.prdts[idx_prdt].U
+            deltaU += self.stois[idx_prdt + self.n_rxtns] * self.prdts[idx_prdt].U
         
         if update:
 
@@ -290,7 +291,7 @@ class reaction:
             deltaH -= self.stois[idx_rxtn] * self.rxtns[idx_rxtn].H
         for idx_prdt in self.n_prdts:
 
-            deltaH += self.stois[idx_rxtn + self.n_rxtns] * self.prdts[idx_prdt].H
+            deltaH += self.stois[idx_prdt + self.n_rxtns] * self.prdts[idx_prdt].H
 
         if update:
 
@@ -318,7 +319,7 @@ class reaction:
             deltaS -= self.stois[idx_rxtn] * self.rxtns[idx_rxtn].S
         for idx_prdt in self.n_prdts:
 
-            deltaS += self.stois[idx_rxtn + self.n_rxtns] * self.prdts[idx_prdt].S
+            deltaS += self.stois[idx_prdt + self.n_rxtns] * self.prdts[idx_prdt].S
         
         if update:
 
@@ -354,7 +355,7 @@ class reaction:
                 deltaF -= self.stois[idx_rxtn] * self.rxtns[idx_rxtn].F
             for idx_prdt in self.n_prdts:
 
-                deltaF += self.stois[idx_rxtn + self.n_rxtns] * self.prdts[idx_prdt].F
+                deltaF += self.stois[idx_prdt + self.n_rxtns] * self.prdts[idx_prdt].F
         elif mode == 'direct':
 
             deltaF = self.deltaU - temperature*self.deltaS
@@ -396,7 +397,7 @@ class reaction:
                 deltaG -= self.stois[idx_rxtn] * self.rxtns[idx_rxtn].G
             for idx_prdt in self.n_prdts:
 
-                deltaG += self.stois[idx_rxtn + self.n_rxtns] * self.prdts[idx_prdt].G
+                deltaG += self.stois[idx_prdt + self.n_rxtns] * self.prdts[idx_prdt].G
         elif mode == 'direct':
 
             deltaG = self.deltaH - temperature*self.deltaS
